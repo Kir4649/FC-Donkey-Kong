@@ -16,10 +16,16 @@ public class Donkey : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
     }
 
     void Update()
     {
+        if (!groundCheckPoint)
+        {
+            GetComponent<Rigidbody2D>().linearVelocity = Vector3.zero;
+        }
+        
         CheckGround();
         MoveBasedOnSlope();
     }
@@ -34,18 +40,23 @@ public class Donkey : MonoBehaviour
     {
         if (rightGround)
         {
+
             // �E�X���n�ʂɂ��� �� �E�Ɉړ�
-            rb.linearVelocity = new Vector2(moveSpeed, rb.linearVelocity.y);
+            //rb.linearVelocity = new Vector3(moveSpeed, rb.linearVelocity.y);
+            transform.position += Vector3.right * moveSpeed * Time.deltaTime;
         }
         else if (leftGround)
         {
+
             // ���X���n�ʂɂ��� �� ���Ɉړ�
-            rb.linearVelocity = new Vector2(-moveSpeed, rb.linearVelocity.y);
+            //rb.linearVelocity = new Vector3(-moveSpeed, rb.linearVelocity.y);
+            transform.position += Vector3.left * moveSpeed * Time.deltaTime;
         }
         else
         {
             // �n�ʂȂ��Ȃ�~�߂�i�����͎��R�����j
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y);
         }
+        
     }
 }
