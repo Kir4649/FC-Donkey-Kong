@@ -1,35 +1,39 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
     public float moveSpeed = 1.0f;//Playeｒのスピード
-    public float jumpForce = 10f;    // ジャンプ力
-    private float speed = 5.0f;//はしごの上る速さ
-    private bool isGrounded;         // 地面に接しているかどうか
+    public float speed = 5.0f;//はしごの上る速さ
+    private SpriteRenderer sprite;
     [SerializeField] private LayerMask ladderLayer;//��q�����邩�ǂ����̔�������邽��
     private float gravity;//���̏d��
     private float inputY;
     [Header("地面チェック")]
-    public Transform groundCheck;    // 地面チェック用の位置
-    public float groundRadius = 0.8f; // 地面判定の円の半径
-    
-    public LayerMask groundLayer;    // 地面レイヤー
-    public LayerMask groundLayer2;
+    private bool isGround = false;
+    public float jumpForce = 10f;    // ジャンプ力
+    private bool Grounded { get; set; } = false;
+    private bool PrevGrounded { get; set; } = false;
+    private bool Jumped { get; set; } = false;
+   
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
         Move();
-        Jump();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }
+
     }
     private void Move()
     {
@@ -45,33 +49,36 @@ public class Player : MonoBehaviour
         }
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
+        if (moveInput > 0) sprite.flipX = false;
+        else if (moveInput < 0) sprite.flipX = true;
+
         if (Ladder())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, inputY * speed);
         }
     }
-    private void Jump()
+    public void Jump()
     {
-        // 地面チェック
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer2);
-
-        // スペースキーでジャンプ
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-        {     
-            //animator.SetBool("Jump", false);
+        if (!Jumped)
+        {
+            Jumped = true;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            Invoke("EndGtounded", 0.2f);
         }
     }
+    private void EndGtounded()
+    {
+        Jumped = false;
+    }
 
-        private bool Ladder()
+    private bool Ladder()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, ladderLayer);
-        if(hit.collider != null)
-        return true;
+        if (hit.collider != null)
+            return true;
         else
             return false;
-        
+
     }
 
 }
