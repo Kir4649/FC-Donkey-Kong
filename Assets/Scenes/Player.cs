@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     private bool PrevGrounded { get; set; } = false;
     private bool Jumped { get; set; } = false;
     public float PlayerHP = 1;
+    public GameObject End;
 
     Enemy enemy;
     void Start()
@@ -24,6 +25,7 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         enemy = FindObjectOfType<Enemy>();
+        if (End != null) End.SetActive(false);
     }
 
     // Update is called once per frame
@@ -36,7 +38,9 @@ public class Player : MonoBehaviour
         }
         if(PlayerHP < 0)
         {
-            Destroy(transform);
+             
+            if (End != null) End.SetActive(true);
+            
         }
 
     }
@@ -75,7 +79,7 @@ public class Player : MonoBehaviour
         {
             Jumped = true;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            Invoke("EndGtounded", 0.2f);
+            Invoke("EndGtounded", 1f);
         }
     }
     private void EndGtounded()
