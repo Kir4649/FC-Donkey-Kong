@@ -12,11 +12,13 @@ public class Donkey : MonoBehaviour
     
     public float checkRadius = 1f;   // ���蔼�a
 
-
+    Player player;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
+        player = FindObjectOfType<Player>();
+        
     }
 
     void Update()
@@ -29,6 +31,7 @@ public class Donkey : MonoBehaviour
         CheckGround();
         MoveBasedOnSlope();
     }
+    
     void CheckGround()
     {
         // RightGround�̔���

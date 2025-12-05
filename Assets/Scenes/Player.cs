@@ -16,13 +16,14 @@ public class Player : MonoBehaviour
     private bool Grounded { get; set; } = false;
     private bool PrevGrounded { get; set; } = false;
     private bool Jumped { get; set; } = false;
-   
+    public float PlayerHP = 1;
 
-
+    Enemy enemy;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+        enemy = FindObjectOfType<Enemy>();
     }
 
     // Update is called once per frame
@@ -33,7 +34,18 @@ public class Player : MonoBehaviour
         {
             Jump();
         }
+        if(PlayerHP < 0)
+        {
+            Destroy(transform);
+        }
 
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            PlayerHP = -1;
+        }
     }
     private void Move()
     {
